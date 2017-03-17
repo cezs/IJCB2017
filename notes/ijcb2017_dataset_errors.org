@@ -1,0 +1,148 @@
+* Re-sizing Errors
+
+These error have been reported during re-sizing of images
+
+#+begin_example 
+convert: Premature end of JPEG file `./training/1/1c8d67a87b92561161a4fa4d383a1925.jpg' @ warning/jpeg.c/JPEGWarningHandler/352.
+convert: Corrupt JPEG data: premature end of data segment `./training/1/1c8d67a87b92561161a4fa4d383a1925.jpg' @ warning/jpeg.c/JPEGWarningHandler/352.
+
+convert: Premature end of JPEG file `./training/2/2654a203a5431508d848e7fc08fdf374.jpg' @ warning/jpeg.c/JPEGWarningHandler/352.
+convert: Corrupt JPEG data: premature end of data segment `./training/2/2654a203a5431508d848e7fc08fdf374.jpg' @ warning/jpeg.c/JPEGWarningHandler/352.
+
+
+convert: Corrupt JPEG data: 42 extraneous bytes before marker 0xd9 `./training/4/25362453b114f9e00ee8791c33bc6c19.jpg' @ warning/jpeg.c/JPEGWarningHandler/352.
+
+convert: Corrupt JPEG data: premature end of data segment `./training/5/e873fec2261aa53de092b9f026109577.jpg' @ warning/jpeg.c/JPEGWarningHandler/352.
+convert: Unsupported marker type 0x04 `./training/5/e873fec2261aa53de092b9f026109577.jpg' @ warning/jpeg.c/JPEGErrorHandler/319.
+
+convert: unable to open image `./t3/bda3d4287dd93069469e28fa5030d367.jpg': Input/output error @ error/blob.c/OpenBlob/2712.
+
+e "%[base]" "./t33/%[filename:base].jpg"
+convert: Corrupt JPEG data: 105 extraneous bytes before marker 0xd9 `./training/3/d85d221c1e968df8915464babb80a707.jpg' @ warning/jpeg.c/JPEGWarningHandler/352.
+#+end_example 
+
+
+* Darknet Errors
+
+Each time error is thrown I take the image out of protocol list and start training again.
+
+** STB Reason: (null)
+
+#+begin_example
+/media/win/_/IJCB2017/training/595fd0eacd48fc5d14eed5eb1240e9e6.jpg
+/media/win/_/IJCB2017/training/e873fec2261aa53de092b9f026109577.jpg
+#+end_example 
+
+** STB Reason: junk before marker
+
+#+begin_example
+/media/win/_/IJCB2017/training/ec78f41f99317699e0c299c8ebfa5e3a.jpg
+/media/win/_/IJCB2017/training/14a83489ad46fb95267a8449645f4a8f.jpg
+/media/win/_/IJCB2017/training/36a8fbfa437a46958019ddf0c3ec6b70.jpg
+/media/win/_/IJCB2017/training/7a83ad9e88f8bab26bda79126ebcac5b.jpg
+/media/win/_/IJCB2017/training/43860a03ce766c3ca826dcf333b39850.jpg
+/media/win/_/IJCB2017/training/2d6fe2d6dd74ce45b4c81ae9a1fbb49b.jpg
+/media/win/_/IJCB2017/training/ea15bae830e97fac53246dd23cc91b9e.jpg
+/media/win/_/IJCB2017/training/09db428b48777e542f78cf29d0b0e6aa.jpg
+/media/win/_/IJCB2017/training/25362453b114f9e00ee8791c33bc6c19.jpg
+/media/win/_/IJCB2017/training/516bcd6e127f7f522cd5d60bf5a0b094.jpg
+/media/win/_/IJCB2017/training/54c5edbf2754dd3e7c5b0c86912cccb3.jpg
+/media/win/_/IJCB2017/training/ed224fdf319c14c88eb3747c18a2a157.jpg
+/media/win/_/IJCB2017/training/6e52205d3a4a29047604dc40134c5aed.jpg
+#+end_example 
+
+*** resized
+
+#+begin_example
+/media/win/_/IJCB2017/training_resized/bfb42b7409d750ef7a00f579479e72d0.jpg
+#+end_example
+
+** STB Reason: expected marker
+
+#+begin_example
+/media/win/_/IJCB2017/training/93aa34ea92a03f5cd97fe673a4c4267d.jpg
+/media/win/_/IJCB2017/training/d9eeac46687201424975e78868fe56dc.jpg
+/media/win/_/IJCB2017/training/e6a3097500977865db9c7a58196b2c44.jpg
+/media/win/_/IJCB2017/training/82992796b3ae1a807a255eb01dba8f15.jpg
+/media/win/_/IJCB2017/training/86779d5e623fd6ae9aa2f9db5f7031bc.jpg
+/media/win/_/IJCB2017/training/70f404987c8652cfdb87f58fd1b630a3.jpg
+#+end_example 
+
+* Unpacking errors
+
+These are left as images can be still opened by standard image viewers
+
+** =cat unpacking.log | grep CRC=
+
+#+begin_example
+inflating: ./training_2/training/283aa21c6ce244125e90f30a3626ef9d.jpg   bad CRC a7fa63cd  (should be e310b216)
+inflating: ./training_2/training/57ba5096ccd244d6c071d3685f8e01af.jpg   bad CRC 5024a7b1  (should be b0ed560e)
+inflating: ./training_11/training/7826e640ecd14d7b2eaffff92bc90450.jpg   bad CRC affde298  (should be c51d478f)
+inflating: ./training_11/training/ca1efb804d68c6c8ca46a6f0e1fc85f0.jpg   bad CRC aadd0092  (should be 6b1ba36d)
+inflating: ./training_11/training/860776b81157d5391eb191af32556f7b.jpg   bad CRC 2340887e  (should be 891da728)
+inflating: ./training_11/training/32c98646addadc51cdd162689d3dbe53.jpg   bad CRC da6c6e36  (should be 2f0e020b)
+inflating: ./training_11/training/72e4e9a42eb5ff1740ca091d012a68cb.jpg   bad CRC ba775035  (should be 6c757b98)
+inflating: ./training_1/training/7b11d03510bafd8501382f9f1f872557.jpg   bad CRC 1fe0a5da  (should be a2ce950c)
+inflating: ./training_1/training/82436b968a923a56646ffb64868efc58.jpg   bad CRC ea7b07be  (should be 33906856)
+inflating: ./training_1/training/9ab2f765baa908605d4d5f6009413f0f.jpg   bad CRC fce9fbfb  (should be 967613cc)
+inflating: ./training_9/training/6f3f74da3386db34a6ee1250fe17e227.jpg   bad CRC 8f1e7206  (should be 94e09ae9)
+inflating: ./training_9/training/ac9fefbeac29e5a201a2d760cb363917.jpg   bad CRC a0d130ff  (should be 148617a5)
+inflating: ./training_9/training/c6045115ed119e9ddf35f1653f719512.jpg   bad CRC 14bcb489  (should be 01b15edd)
+inflating: ./training_5/training/959d24f04ffc2b0c8d6031c72cfc07ab.jpg   bad CRC e934e1e5  (should be 4fe0c129)
+inflating: ./training_5/training/dc80309fcf2b98d8c371a22de5e00f81.jpg   bad CRC 2ec548e3  (should be 329c7c47)
+inflating: ./training_8/training/3155ced6433cdea82c005a5e8a99a9dd.jpg   bad CRC 9dfed119  (should be d2432234)
+inflating: ./training_6/training/e09ec1b252c81295fd3f432dc8b50ed3.jpg   bad CRC 08d5eeaf  (should be 3076fe79)
+inflating: ./training_6/training/595fd0eacd48fc5d14eed5eb1240e9e6.jpg   bad CRC 243b13d0  (should be de701beb)
+inflating: ./training_6/training/9768d888a86cfc13c071b0d6ad9b8cdb.jpg   bad CRC b7c1a9db  (should be 76a3249e)
+inflating: ./training_6/training/a3d53a3cc0b55e88dbcb4c67216219b0.jpg   bad CRC b78b1157  (should be a0a7e679)
+inflating: ./training_10/training/3d66b752a8ef6d670873f6e75428dd57.jpg   bad CRC ab24098e  (should be 6aba915b)
+inflating: ./training_10/training/25362453b114f9e00ee8791c33bc6c19.jpg   bad CRC cdc8f0e5  (should be b798c6b5)
+inflating: ./training_7/training/3bb40f33752043b2beb85c73f08877ca.jpg   bad CRC c9fa35ae  (should be 97ba9eed)
+#+end_example 
+
+** =cat unpacking2.log | grep CRC=
+
+#+begin_example
+inflating: ./training_3/training/34a59a0641bb18bfc8a88ef94967019f.jpg   bad CRC 0bd4e11d  (should be 3ee90e2c)
+inflating: ./training_3/training/f8e86b26a2fe391551720b599eae16e9.jpg   bad CRC 34f8f227  (should be 2c120d8b)
+inflating: ./training_3/training/d09439819c7aa45b814e13aa85615b95.jpg   bad CRC 3aea1c85  (should be 8f93731d)
+inflating: ./training_4/training/632f2113bcebe87f672f22c6a8c7aac3.jpg   bad CRC a6dd2718  (should be a902cfe1)
+inflating: ./training_4/training/43860a03ce766c3ca826dcf333b39850.jpg   bad CRC d26cb4cb  (should be da173766)
+#+end_example 
+
+** =cat unpacking3.log | grep CRC=
+
+#+begin_example
+inflating: training/48d2c8d6e570f75bb6a234ef1c87df02.jpg   bad CRC d8a3fbfa  (should be f5e71c88)
+inflating: training/8fd1b807ebd48e3c09ed7a0147b2c794.jpg   bad CRC dda14223  (should be 438a0c70)
+inflating: training/99836cebf47244b7744e99b85c7da79b.jpg   bad CRC c6dacc6f  (should be e35be2c8)
+inflating: training/8b0c8e2450a0afeed9e9385d00ec1bdb.jpg   bad CRC de0ceee6  (should be 7d730347)
+inflating: training/cf2f3457cba90d10225f6999eb12c849.jpg   bad CRC be2e4322  (should be bd5ec82a)
+inflating: training/6e099d7002cf1fcc33f5ef664b476c28.jpg   bad CRC ffb97cff  (should be 7260e899)
+#+end_example 
+
+** =cat unpacking_validation.log | grep CRC=
+
+#+begin_example
+inflating: ./validation_1/validation/5c7dd71fc089d626c1677a1a026c761b.jpg   bad CRC 02096368  (should be 48ede271)
+inflating: ./validation_1/validation/e9f8986aab0d2e64220b8538ca63690f.jpg   bad CRC a5a36be9  (should be ea1330b1)
+inflating: ./validation_1/validation/a3792a9bdf5944a942f6ab1801b370f1.jpg   bad CRC ff7ad033  (should be 35c68f09)
+inflating: ./validation_2/validation/9a0edf17973271e55f4cc3fd46509ade.jpg   bad CRC 9ee01abe  (should be e700c286)
+inflating: ./validation_2/validation/26594d1ceb26b6459335d75c9e9f3620.jpg   bad CRC f27c1d29  (should be 53757783)
+inflating: ./validation_3/validation/63e0472498175cbbb2e354caa7b71987.jpg   bad CRC 6a544d97  (should be 2d4e7493)
+inflating: ./validation_3/validation/af2d031c8213b108167b98a0a8609faf.jpg   bad CRC 0e23d395  (should be ee6763dc)
+inflating: ./validation_3/validation/adac52d00ea51ce9a46e3ed6b25c3321.jpg   bad CRC 5f366d70  (should be 8f01707f)
+inflating: ./validation_3/validation/41fb33db604d5754eff0295ece3c5d23.jpg   bad CRC a67360d8  (should be 3f984336)
+inflating: ./validation_3/validation/f658660016d1ab0bf1156e9fffb86505.jpg   bad CRC 3ab0df69  (should be 4d169f5d)
+inflating: ./validation_3/validation/6938a0054be543dc77b3eb75637ff413.jpg   bad CRC 78caaa57  (should be 0c779b06)
+inflating: ./validation_4/validation/00238c7b20f5478f36928a33e3032a98.jpg   bad CRC 07c7d09b  (should be 14f652c6)
+inflating: ./validation_4/validation/2fe365013ba3626f25420b6c97b2ad0b.jpg   bad CRC 3fb1fe06  (should be d7ed04d4)
+inflating: ./validation_4/validation/7b7e15736dbb1a8d05f3dffbba364b07.jpg   bad CRC bd2ed522  (should be 28606f36)
+inflating: ./validation_4/validation/90606ea4973964f613456689c3bd2675.jpg   bad CRC 8579d0b6  (should be 30b6e23b)
+inflating: ./validation_4/validation/1d54dac3e3311a1df706fe7ee72d5e3f.jpg   bad CRC 6ab2f681  (should be 36682ec8)
+inflating: ./validation_4/validation/fa414e1f2bf8d59a6b0ff9ed2a1127da.jpg   bad CRC 61b6137d  (should be 357f8640)
+inflating: ./validation_5/validation/e882d53867afd96d9e9fad4704faf8c6.jpg   bad CRC 8c277685  (should be 1d683a7a)
+inflating: ./validation_5/validation/1d3947fa5c514db97bccd978d6ef2693.jpg   bad CRC 7a9f7eae  (should be 88249ef5)
+inflating: ./validation_6/validation/e3a145c391b64abc0344ecb2067361a8.jpg   bad CRC c405771c  (should be dbabe101)
+inflating: ./validation_6/validation/9548906963f14c931eabd536d2b33109.jpg   bad CRC ea0cc3cd  (should be 3a8fec3c)
+#+end_example 
