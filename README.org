@@ -17,7 +17,7 @@ Note: all together datasets weight >75 GB, so it might take a while to download 
 
 * Unpack
 
-Log any unpacking errors with the following command
+Unpack and log any unpacking errors with the following command
 #+begin_src sh
 find -name 'training_*.zip' -exec sh -c 'unzip -d "${1%.*}" "$1"' _ {} \; > unzip.log 2>&1
 #+end_src
@@ -28,6 +28,15 @@ If required resize the dataset (note: it might take a while)
 #+begin_src sh
 convert "./training/*.jpg[576x]" -set filename:base "%[base]" "./training_resized/%[filename:base].jpg"
 #+end_src
+where 576 is width of an image, and height is scaled accordingly to keep aspect ratio of the image. However, you might skip this step as Darknet YOLO already contains /crop/ layer.
+
+If required use,
+#+begin_src sh
+file <image>
+#+end_src
+to find the current dimensions of an image.
+
+Change =use_resized_dataset= to =True= in /cs_convert_to_darknet.py/ in order to use resized dataset.
 
 Now run the following script
 #+begin_src sh
@@ -39,3 +48,4 @@ This script generates the following files
 - ijcb2017.data :: contains number of classes and necessary paths
 - ijcb2017.txt :: list of image files
 - training/*.txt :: individual file for each image containing class, x, y, width and height parameters of bounding box
+
