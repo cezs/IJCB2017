@@ -1,0 +1,41 @@
+#+title: IJCB2017
+
+* Download
+
+First register at [[http://www.face-recognition-challenge.com/][challenge's webpage]]. The download page is located under [[http://vast.uccs.edu/Opensetface/][following link]].
+
+After acquiring username and password
+#+begin_src sh
+nohup wget -c --user=<username> --password=<password> <received_link>/training_{1..11}.zip -P <target_dir>
+#+end_src
+
+#+begin_src sh
+nohup wget -c --user=<username> --password=<password> <received_link>/validation_{1..6}.zip -P <target_dir>
+#+end_src
+
+Note: all together datasets weight >75 GB, so it might take a while to download it from university servers.
+
+* Unpack
+
+Log any unpacking errors with the following command
+#+begin_src sh
+find -name 'training_*.zip' -exec sh -c 'unzip -d "${1%.*}" "$1"' _ {} \; > unzip.log 2>&1
+#+end_src
+
+* Prepare Dataset for Darknet YOLO
+
+If required resize the dataset (note: it might take a while)
+#+begin_src sh
+convert "./training/*.jpg[576x]" -set filename:base "%[base]" "./training_resized/%[filename:base].jpg"
+#+end_src
+
+Now run the following script
+#+begin_src sh
+./cs_regenerate.sh
+#+end_src
+
+This script generates the following files
+- ijcb2017.names :: class names fed to ijcb2017.data
+- ijcb2017.data :: contains number of classes and necessary paths
+- ijcb2017.txt :: list of image files
+- training/*.txt :: individual file for each image containing class, x, y, width and height parameters of bounding box
