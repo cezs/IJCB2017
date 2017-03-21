@@ -1,5 +1,6 @@
 import os
 import csv
+import argparse
 
 class bcolors:
     HEADER = '\033[95m'
@@ -132,17 +133,29 @@ def calculate_classes(input_training_listing, ):
 
 if __name__ == "__main__":
 
+    parser = argparse.ArgumentParser(description="Unconstrained Face Detection and Open Set Recognition Challenge in Darknet")
+    parser.add_argument('-a', '--resized_dataset', dest='a', action='store_true', help='Use resized dataset')
+    parser.add_argument('-b', '--original_classes', dest='b', action='store_true', help='Use original classes')
+    parser.add_argument('-c', '--training_list', dest='c', action='store_true', help='Create Darknet list for training')
+    parser.add_argument('-d', '--training_annotations', dest='d', action='store_true', help='Create Darknet annotations for training')
+    parser.add_argument('-e', '--validation_list', dest='e', action='store_true', help='Create Darknet list for validation')
+    parser.add_argument('-f', '--validation_annotations', dest='f', action='store_true', help='Create Darknet annotations for validation')
+    parser.add_argument('-g', '--labels_file', dest='g', action='store_true', help='Create labels file')
+    parser.add_argument('-i', '--names_file', dest='i', action='store_true', help='Create names file')
+    parser.add_argument('-j', '--data_cfg_file', dest='j', action='store_true', help='Create data configuration file')
+    args = parser.parse_args()
+
     print(bcolors.BOLD + "Entered main function" + bcolors.ENDC)
-    
-    use_resized_dataset = True
-    use_original_classes = False
-    do_create_create_darknet_list_for_training = True
-    do_create_darknet_annotations_for_training = True
-    do_create_darknet_list_for_validation = True
-    do_create_darknet_annotations_for_validation = True
-    do_create_labels_file = True
-    do_create_names_file = True
-    do_create_configuration_file = True
+
+    use_resized_dataset = args.a
+    use_original_classes = args.b
+    do_create_darknet_list_for_training = args.c
+    do_create_darknet_annotations_for_training = args.d
+    do_create_darknet_list_for_validation = args.e
+    do_create_darknet_annotations_for_validation = args.f
+    do_create_labels_file = args.g
+    do_create_names_file = args.i
+    do_create_configuration_file = args.j
     
     config_file = '/media/win/_/IJCB2017/cfg/ijcb2017.data'
     labels_file = '/media/win/_/IJCB2017/data/ijcb2017.labels'
@@ -173,6 +186,8 @@ if __name__ == "__main__":
 
     if use_resized_dataset:
         script_info("Using resized dataset")
+    else:
+        script_info("Using original dataset")
 
     if use_original_classes:
         script_info("Using original classification")
@@ -182,7 +197,7 @@ if __name__ == "__main__":
     train_filenames, subject_id, x, y, width, height = \
         ijcb2017_to_darknet(input_training_listing, use_original_classes)
         
-    if do_create_create_darknet_list_for_training:
+    if do_create_darknet_list_for_training:
         create_darknet_list(output_training_listing, \
                              training_images, \
                              train_filenames)
