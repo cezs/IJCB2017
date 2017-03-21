@@ -44,8 +44,10 @@ Now run the following script
 #+end_src
 
 This script generates the following files
-- ijcb2017.names :: class names fed to ijcb2017.data
 - ijcb2017.data :: contains number of classes and necessary paths
-- ijcb2017.txt :: list of image files
-- training/*.txt :: individual file for each image containing class, x, y, width and height parameters of bounding box
-
+- ijcb2017.labels :: class numbers fed to ijcb2017.data
+- ijcb2017.names :: class names fed to ijcb2017.data
+- ijcb2017.train.list :: list of image files selected for training
+- ijcb2017.valid.list :: list of image files selected for validation
+- training/*.txt :: individual file annotation for each image containing class, x, y, width and height parameters of bounding box
+- validation/*.txt :: individual file for each image containing class, x, y, width and height parameters of bounding box
