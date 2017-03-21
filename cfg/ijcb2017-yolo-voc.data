@@ -1,10 +1,10 @@
 classes = 2
-train  = /media/win/_/IJCB2017/ijcb2017_resized.list
-valid  = /media/win/_/IJCB2017/ijcb2017_resized.list
-labels = /media/win/_/IJCB2017/run/yolo-voc/ijcb2017.labels
-names = /media/win/_/IJCB2017/run/yolo-voc/ijcb2017.names
-backup = /media/win/_/IJCB2017/run/yolo-voc/weights
-results = /media/win/_/IJCB2017/run/yolo-voc/results
+train  = /media/win/_/IJCB2017/ijcb2017_resized.train.list
+valid  = /media/win/_/IJCB2017/ijcb2017_resized.valid.list
+labels = /media/win/_/IJCB2017/data/ijcb2017.labels
+names = /media/win/_/IJCB2017/data/ijcb2017.names
+backup = /media/win/_/IJCB2017/weights
+results = /media/win/_/IJCB2017/valid/ijcb2017-yolo-voc
 #map = ...
 #eval = ...
 #top= ...
