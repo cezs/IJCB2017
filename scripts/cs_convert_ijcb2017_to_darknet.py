@@ -18,13 +18,10 @@ class bcolors:
 def script_info(msg):
     print bcolors.HEADER + "[INFO] " + str(msg) + bcolors.ENDC
 
-def lib_info(msg):
-    print bcolors.OKBLUE + "[INFO] " + str(msg) + bcolors.ENDC
-
 def ijcb2017_to_darknet(ijcb2017_annotations, use_original_classes):
     """
-    covert to darknet format and store in python lists.
-    returns bboxes with classes and corresponding images filenames.
+    Covert to darknet format and store in python lists.
+    Returns bboxes with classes and corresponding images filenames.
     """
     filenames = []
     subject_id= []
@@ -42,8 +39,7 @@ def ijcb2017_to_darknet(ijcb2017_annotations, use_original_classes):
             if (use_original_classes):
                 # use original class
                 # TODO: map original subject_id to label
-                # instead of using int() + 1 hack
-                subject_id.append(int(row[2]) + 1)
+                subject_id.append(int(row[2]))
             else:
                 # just detect
                 subject_id.append(1)
@@ -58,37 +54,54 @@ def ijcb2017_to_darknet(ijcb2017_annotations, use_original_classes):
     return filenames, subject_id, x, y, width, height
 
 
-def create_darknet_list(output_training_listing, training_images, train_filenames):
-    """training list"""
-    # print converted listing of images for training 
-    with open(output_training_listing, 'wb') as out_train_listing:
+def create_darknet_list(output_list, prepended_directory, input_list):
+    """Create list of paths to images"""
+    # print converted listing of images
+    with open(output_list, 'wb') as out_list:
         # note the use of set to from list from only unique filenames
-        for f in set(train_filenames):
-            out_train_listing.write("{}/{}\n".format(training_images, f))
+        for f in set(input_list):
+            out_list.write("{}/{}\n".format(prepended_directory, f))
 
-def create_darknet_annotations(train_filenames, training_images, subject_id, x, y, width, height):
-    """create individual training annotations"""
-    # make list of filenames for files which are going to store individual
-    # id, x, y, width and height
+def create_darknet_annotations(use_original_classes, input_list, output_directory, \
+                               subject_id, x, y, width, height):
+    """
+    Create individual training annotations i.e., make list of filenames for 
+    files which are going to store individual id, x, y, width and height.
+    """
     individual_filenames = []
 
-    for f in train_filenames:
+    for f in input_list:
         individual_filenames.append(f.rsplit(".", 1)[0] + '.txt')
 
-    for i in range(len(x)):
-        with open("{}/{}".format(training_images, individual_filenames[i]), 'a') as newfile:
-            newfile.write("{} {} {} {} {}\n".format(subject_id[i], \
-                                                    x[i], \
-                                                    y[i], \
-                                                    width[i], \
-                                                    height[i]))
+    if (use_original_classes):
+        for i in range(len(x)):
+            if not subject_id[i] == -1:
+                with open("{}/{}".format(output_directory, \
+                                         individual_filenames[i]), 'a') as newfile:
+                    newfile.write("{} {} {} {} {}\n".format(subject_id[i], \
+                                                            x[i], \
+                                                            y[i], \
+                                                            width[i], \
+                                                            height[i]))
+    else:
+        for i in range(len(x)):
+            with open("{}/{}".format(output_directory, \
+                                     individual_filenames[i]), 'a') as newfile:
+                newfile.write("{} {} {} {} {}\n".format(subject_id[i], \
+                                                        x[i], \
+                                                        y[i], \
+                                                        width[i], \
+                                                        height[i]))
+        
 
 def create_labels_file(labels_file, use_original_classes, subject_id):
-    """labels file"""
+    """Create labels file."""
     with open(labels_file, 'wb') as labels:
         if (use_original_classes):
             # use original classification
-            for i in range(len(set(subject_id))):
+            original_classification = sorted(set(subject_id))
+            original_classification.remove(-1)
+            for i in range(len(original_classification)):
                 labels.write("{}\n".format(i))
         else:
             # use binary classification
@@ -96,21 +109,21 @@ def create_labels_file(labels_file, use_original_classes, subject_id):
             labels.write("{}\n".format(1))
 
 def create_names_file(names_file, use_original_classes, subject_id):
-    """names file"""
+    """Create names file."""
     with open(names_file, 'wb') as names:
             if (use_original_classes):
                 # use original classification
-                for i in set(subject_id):
+                original_classification = sorted(set(subject_id))
+                original_classification.remove(-1)
+                for i in original_classification:
                     names.write("{}\n".format(i))
             else:
                 # use binary classification
                 names.write("{}\n".format("nothing"))
                 names.write("{}\n".format("face"))
 
-def create_darknet_data_configuration_file(config_file_path):
-    """configuration file"""
-    config_file = config_file_path
-
+def create_darknet_data_configuration_file(config_file):
+    """Create configuration file."""
     with open(config_file, 'wb') as cfg_file:
         if (use_original_classes):
             # use original classification
@@ -124,28 +137,27 @@ def create_darknet_data_configuration_file(config_file_path):
         cfg_file.write("{} = {}\n".format("names", names_file))
         cfg_file.write("{} = {}\n".format("backup","backup"))
 
-def calculate_classes(input_training_listing, ):
-    classes = []
-    # append each image filename for training to list 
-    with open(input_training_listing, 'r') as in_train_listing:
-        reader = csv.reader(in_train_listing)
-        next(reader)
-        for row in reader:
-            classes.append(row[2])
-    print(len(set(classes)))
-
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Unconstrained Face Detection and Open Set Recognition Challenge in Darknet")
-    parser.add_argument('-a', '--resized_dataset', dest='a', action='store_true', help='Use resized dataset')
-    parser.add_argument('-b', '--original_classes', dest='b', action='store_true', help='Use original classes')
-    parser.add_argument('-c', '--training_list', dest='c', action='store_true', help='Create Darknet list for training')
-    parser.add_argument('-d', '--training_annotations', dest='d', action='store_true', help='Create Darknet annotations for training')
-    parser.add_argument('-e', '--validation_list', dest='e', action='store_true', help='Create Darknet list for validation')
-    parser.add_argument('-f', '--validation_annotations', dest='f', action='store_true', help='Create Darknet annotations for validation')
-    parser.add_argument('-g', '--labels_file', dest='g', action='store_true', help='Create labels file')
-    parser.add_argument('-i', '--names_file', dest='i', action='store_true', help='Create names file')
-    parser.add_argument('-j', '--data_cfg_file', dest='j', action='store_true', help='Create data configuration file')
+    parser.add_argument('-a', '--resized_dataset', dest='a', action='store_true',
+                        help='Use resized dataset')
+    parser.add_argument('-b', '--original_classes', dest='b', action='store_true',
+                        help='Use original classes')
+    parser.add_argument('-c', '--training_list', dest='c', action='store_true',
+                        help='Create Darknet list for training')
+    parser.add_argument('-d', '--training_annotations', dest='d', action='store_true',
+                        help='Create Darknet annotations for training')
+    parser.add_argument('-e', '--validation_list', dest='e', action='store_true',
+                        help='Create Darknet list for validation')
+    parser.add_argument('-f', '--validation_annotations', dest='f', action='store_true',
+                        help='Create Darknet annotations for validation')
+    parser.add_argument('-g', '--labels_file', dest='g', action='store_true',
+                        help='Create labels file')
+    parser.add_argument('-i', '--names_file', dest='i', action='store_true',
+                        help='Create names file')
+    parser.add_argument('-j', '--data_cfg_file', dest='j', action='store_true',
+                        help='Create data configuration file')
     args = parser.parse_args()
 
     print(bcolors.BOLD + "Entered main function" + bcolors.ENDC)
@@ -207,7 +219,8 @@ if __name__ == "__main__":
         script_info("Created darknet list for training")
 
     if do_create_darknet_annotations_for_training:
-        create_darknet_annotations(train_filenames, training_images, subject_id, \
+        create_darknet_annotations(use_original_classes, train_filenames, \
+                                   training_images, subject_id, \
                                    x, y, width, height)
         script_info("Created darknet annotations for training")
 
@@ -221,7 +234,8 @@ if __name__ == "__main__":
         script_info("Created darknet list for validation")
 
     if do_create_darknet_annotations_for_validation:
-        create_darknet_annotations(v_filenames, validation_images, v_subject_id, \
+        create_darknet_annotations(use_original_classes, v_filenames, \
+                                   validation_images, v_subject_id, \
                                    v_x, v_y, v_width, v_height)
         script_info("Created darknet annotations for validation")
 
