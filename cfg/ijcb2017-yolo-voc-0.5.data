@@ -1,0 +1,10 @@
+classes = 2
+train  = /media/win/_/IJCB2017/ijcb2017_resized.train.list
+valid  = /media/win/_/IJCB2017/ijcb2017_resized.train.list
+labels = /media/win/_/IJCB2017/data/ijcb2017.labels
+names = /media/win/_/IJCB2017/data/ijcb2017.names
+backup = /media/win/_/IJCB2017/weights
+results = /media/win/_/IJCB2017/valid/ijcb2017-yolo-voc-0.5
+#map = ...
+#eval = ...
+#top= ...
