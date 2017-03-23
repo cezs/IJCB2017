@@ -36,7 +36,6 @@ def ijcb2017_to_darknet(ijcb2017_annotations, use_original_classes, img_width, i
         reader = csv.reader(img_sid_bbox_list)
         next(reader)
         for row in reader:
-            filenames.append(row[1])
             if (use_original_classes):
                 # use original class
                 # TODO: map original subject_id to label
@@ -47,6 +46,7 @@ def ijcb2017_to_darknet(ijcb2017_annotations, use_original_classes, img_width, i
             else:
                 # just detect
                 subject_id.append(1)
+            filenames.append(row[1])
             # recalculate starting position of bounding box to the center
             # of it instead of the supplied upper left corner and make
             # position as well as dimensions of this bounding box relative
@@ -66,24 +66,29 @@ def create_darknet_list(output_list, prepended_directory, input_list):
         for f in set(input_list):
             out_list.write("{}/{}\n".format(prepended_directory, f))
 
-def create_darknet_annotations(input_list, output_directory, \
+def create_darknet_annotations(output_directory, input_list,\
                                subject_id, x, y, width, height):
     """
-    Create individual training annotations i.e., make list of filenames for 
-    files which are going to store individual id, x, y, width and height.
+    Create individual annotations. Store each individual bbox's id, 
+    x, y, width and height in file with name corresponding to 
+    the image's name.
     """
     individual_filenames = []
 
     for f in input_list:
+        # take image's file name and change extension to .txt
         individual_filenames.append(f.rsplit(".", 1)[0] + '.txt')
 
-    for i in range(len(x)):
-        with open("{}/{}".format(output_directory, \
+    for i in range(len(subject_id)):
+        # generate annotation
+        # note: each annotation might be opened and written to, 
+        # more than once, thus we set it to appending mode.
+        with open("{}/{}".format(output_directory,\
                                  individual_filenames[i]), 'a') as newfile:
-            newfile.write("{} {} {} {} {}\n".format(subject_id[i], \
-                                                    x[i], \
-                                                    y[i], \
-                                                    width[i], \
+            newfile.write("{} {} {} {} {}\n".format(subject_id[i],\
+                                                    x[i],\
+                                                    y[i],\
+                                                    width[i],\
                                                     height[i]))
 
 def create_labels_file(labels_file, use_original_classes, subject_id):
@@ -110,12 +115,12 @@ def create_names_file(names_file, use_original_classes, subject_id):
                 names.write("{}\n".format("nothing"))
                 names.write("{}\n".format("face"))
 
-def create_darknet_data_configuration_file(data_config_file, \
-                                           use_original_classes, \
-                                           subject_id, \
-                                           output_training_listing, \
-                                           labels_file, \
-                                           names_file, \
+def create_darknet_data_configuration_file(data_config_file,\
+                                           use_original_classes,\
+                                           subject_id,\
+                                           output_training_listing,\
+                                           labels_file,\
+                                           names_file,\
                                            backup_dir):
     """Create configuration file."""
     with open(data_config_file, 'wb') as cfg_file:
@@ -130,13 +135,24 @@ def create_darknet_data_configuration_file(data_config_file, \
         cfg_file.write("{} = {}\n".format("labels", labels_file))
         cfg_file.write("{} = {}\n".format("names", names_file))
         cfg_file.write("{} = {}\n".format("backup", backup_dir))
+        
+def create_darknet_data_configuration_file_short(cfg, paths, subject_id):
+    return create_darknet_data_configuration_file(paths.data_config_file,\
+                                                  cfg.use_original_classes,\
+                                                  subject_id,\
+                                                  paths.output_training_listing,\
+                                                  paths.labels_file,\
+                                                  paths.names_file,\
+                                                  paths.backup_dir)
 
 class Paths(dict):
+    """Store paths."""
     def __init__(self, **kwargs):
         super(Paths, self).__init__(**kwargs)
         self.__dict__ = self
 
 class Config(dict):
+    """Store boolean values"""
     def __init__(self, **kwargs):
         super(Config, self).__init__(**kwargs)
         self.__dict__ = self
@@ -154,50 +170,61 @@ def run(cfg, paths):
         script_info("Using binary classification")
 
     train_filenames, subject_id, x, y, width, height = \
-        ijcb2017_to_darknet(paths.input_training_listing, cfg.use_original_classes, paths.img_width, paths.img_height)
+        ijcb2017_to_darknet(paths.input_training_listing,\
+                            cfg.use_original_classes,\
+                            paths.img_width,\
+                            paths.img_height)
         
     if cfg.do_create_darknet_list_for_training:
-        create_darknet_list(paths.output_training_listing, \
-                             paths.training_images, \
-                             train_filenames)
+        create_darknet_list(paths.output_training_listing,\
+                            paths.training_images,\
+                            train_filenames)
         script_info("Created darknet list for training")
 
     if cfg.do_create_darknet_annotations_for_training:
-        create_darknet_annotations(train_filenames, \
-                                   paths.training_images, subject_id, \
+        create_darknet_annotations(paths.training_images,\
+                                   train_filenames,\
+                                   subject_id,\
                                    x, y, width, height)
         script_info("Created darknet annotations for training")
 
     v_filenames, v_subject_id, v_x, v_y, v_width, v_height = \
-        ijcb2017_to_darknet(paths.input_validation_listing, cfg.use_original_classes, paths.img_width, paths.img_height)
+        ijcb2017_to_darknet(paths.input_validation_listing,\
+                            cfg.use_original_classes,\
+                            paths.img_width, paths.img_height)
 
     if cfg.do_create_darknet_list_for_validation:
-        create_darknet_list(paths.output_validation_listing, \
-                             paths.validation_images, \
+        create_darknet_list(paths.output_validation_listing,\
+                             paths.validation_images,\
                              v_filenames)
         script_info("Created darknet list for validation")
 
     if cfg.do_create_darknet_annotations_for_validation:
-        create_darknet_annotations(v_filenames, \
-                                   paths.validation_images, v_subject_id, \
+        create_darknet_annotations(paths.validation_images,\
+                                   v_filenames,\
+                                   v_subject_id,\
                                    v_x, v_y, v_width, v_height)
         script_info("Created darknet annotations for validation")
 
     if cfg.do_create_labels_file:
-        create_labels_file(paths.labels_file, cfg.use_original_classes, subject_id)
+        create_labels_file(paths.labels_file,\
+                           cfg.use_original_classes,\
+                           subject_id)
         script_info("Created labels file")
 
     if cfg.do_create_names_file:
-        create_names_file(paths.names_file, cfg.use_original_classes, subject_id)
+        create_names_file(paths.names_file,\
+                          cfg.use_original_classes,\
+                          subject_id)
         script_info("Created names file")
 
     if cfg.do_create_configuration_file:
-        create_darknet_data_configuration_file(paths.data_config_file, \
-                                               cfg.use_original_classes, \
-                                               subject_id, \
-                                               paths.output_training_listing, \
-                                               paths.labels_file, \
-                                               paths.names_file, \
+        create_darknet_data_configuration_file(paths.data_config_file,\
+                                               cfg.use_original_classes,\
+                                               subject_id,\
+                                               paths.output_training_listing,\
+                                               paths.labels_file,\
+                                               paths.names_file,\
                                                paths.backup_dir)
         script_info("Created configuration file")
 
@@ -230,7 +257,7 @@ def getArgs():
 
     # if args empty
     if not len(sys.argv) > 1:
-        # cfg = Config(True,False,True,True,True,True,True,True,True)
+        # cfg = Config(True, False, True, True, True, True, True, True, True)
         cfg = Config(use_resized_dataset = True,\
                      use_original_classes = False,\
                      do_create_darknet_list_for_training = True,\
@@ -251,20 +278,24 @@ def getArgs():
                      do_create_names_file = args.i,\
                      do_create_configuration_file = args.j)
     
-    paths = Paths(data_config_file = '/media/win/_/IJCB2017/cfg/ijcb2017.data', \
-                  labels_file = '/media/win/_/IJCB2017/data/ijcb2017.labels', \
-                  names_file = '/media/win/_/IJCB2017/data/ijcb2017.names', \
-                  backup_dir =  '/media/win/_/IJCB2017/backup', \
+    paths = Paths(data_config_file = '/media/win/_/IJCB2017/cfg/ijcb2017.data',\
+                  labels_file = '/media/win/_/IJCB2017/data/ijcb2017.labels',\
+                  names_file = '/media/win/_/IJCB2017/data/ijcb2017.names',\
+                  backup_dir =  '/media/win/_/IJCB2017/weights',\
+                  # results = /media/win/_/IJCB2017/valid/ijcb2017-yolo-voc
+                  #map = ...
+                  #eval = ...
+                  #top= ...
 
-                  input_training_listing = '', \
+                  input_training_listing = '',\
                   output_training_listing ='/media/win/_/IJCB2017/ijcb2017.train.list',\
-                  training_images = '', \
+                  training_images = '',\
 
-                  input_validation_listing = '/media/win/_/IJCB2017/protocol/validation.csv', \
-                  output_validation_listing ='/media/win/_/IJCB2017/ijcb2017.valid.list', \
-                  validation_images = '/media/win/_/IJCB2017/validation', \
+                  input_validation_listing = '/media/win/_/IJCB2017/protocol/validation.csv',\
+                  output_validation_listing ='/media/win/_/IJCB2017/ijcb2017.valid.list',\
+                  validation_images = '/media/win/_/IJCB2017/validation',\
 
-                  img_height = 0, \
+                  img_height = 0,\
                   img_width = 0)
 
     if not cfg.use_resized_dataset:
@@ -284,8 +315,88 @@ def getArgs():
 
     return cfg, paths
 
+class Infodata:
+    def __init__(self, paths, cfg):
+        # self.filename, self.subject_id, self.x, self.y, self.width, self.height = \
+        #     ijcb2017_to_darknet(paths.input_validation_listing,\
+        #                         cfg.use_original_classes,\
+        #                         paths.img_width, paths.img_height)
+        filename, subject_id, x, y, width, height = \
+            ijcb2017_to_darknet(paths.input_validation_listing,\
+                                cfg.use_original_classes,\
+                                paths.img_width, paths.img_height)
+        self.filename = filename
+        self.subject_id = subject_id
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+
+    def printer(self):
+        print '{}\n{}\n{}\n{}\n{}\n{}'.format(self.filename, self.subject_id,\
+                                         self.x, self.y, self.width, self.height)
+
 if __name__ == "__main__":
     
     cfg, paths = getArgs()
 
     run(cfg, paths)
+
+# if __name__ == "__main__":
+    
+#     cfg, paths = getArgs()
+
+#     infodata = Infodata(paths, cfg)
+#     infodata.printer()
+
+# train_filenames, subject_id, x, y, width, height = \
+#     ijcb2017_to_darknet(paths.input_training_listing,\
+#                         cfg.use_original_classes,\
+#                         paths.img_width,\
+#                         paths.img_height)
+# v_filenames, v_subject_id, v_x, v_y, v_width, v_height = \
+#     ijcb2017_to_darknet(paths.input_validation_listing,\
+#                         cfg.use_original_classes,\
+#                         paths.img_width, paths.img_height)
+
+def short_create_darknet_list_for_training(paths, infodata):
+    return create_darknet_list(paths.output_training_listing,\
+                         paths.training_images,\
+                         infodata.filename)
+
+def short_create_darknet_annotations_for_training(paths, infodata):
+    return create_darknet_annotations(paths.training_images,\
+                                      infodata.filename,\
+                                      infodata.subject_id,\
+                                      infodata.x, infodata.y,\
+                                      infodata.width, infodata.height)
+
+def short_create_darknet_list_for_validation(paths, filename):
+    return create_darknet_list(paths.output_validation_listing,\
+                         paths.validation_images,\
+                         filename)
+
+def short_create_darknet_annotations_for_validation(paths, infodata):
+    return create_darknet_annotations(paths.validation_images,\
+                                      infodata.filename,\
+                                      infodata.subject_id,\
+                                      infodata.x, infodata.y, infodata.width, infodata.height)
+
+def short_create_labels_file(paths, cfg, infodata):
+    return create_labels_file(paths.labels_file,\
+                       cfg.use_original_classes,\
+                       infodata.subject_id)
+
+def short_create_names_file(paths, cfg, infodata):
+    return create_names_file(paths.names_file,\
+                      cfg.use_original_classes,\
+                      infodata.subject_id)
+
+def short_create_configuration_file(paths, cfg, infodata):
+    return create_darknet_data_configuration_file(paths.data_config_file,\
+                                           cfg.use_original_classes,\
+                                           infodata.subject_id,\
+                                           paths.output_training_listing,\
+                                           paths.labels_file,\
+                                           paths.names_file,\
+                                           paths.backup_dir)
