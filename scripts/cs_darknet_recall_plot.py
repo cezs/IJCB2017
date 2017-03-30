@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
+plt.style.use('ggplot')
 
 # 22
-filepath='/home/cs/remote/titanx/media/win/_/IJCB2017/run/yolo-voc/ijcb2017-yolo-voc.recall'[22:]
+filepath='/home/cs/remote/titanx/media/win/_/IJCB2017/recall/ijcb2017-yolo-voc.recall'[0:]
 
 ijcb2017 = []
 ijcb2017_rp_per_img = []
@@ -26,6 +27,11 @@ with open(filepath, 'rb') as recall:
         #                   fields[6].replace("%",""),\
         #                   fields[7].replace("%","").replace("Recall:",""))
 
-plt.plot([row[3] for row in ijcb2017])
-plt.grid()
+# results = len(ijcb2017)
+fig, ax = plt.subplots(3,2)
+for i in range(3):
+    for j in range(2):
+        ax[i, j].plot([row[j*3+i] for row in ijcb2017])
+        ax[i, j].grid()
 plt.show()
+
