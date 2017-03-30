@@ -1,14 +1,17 @@
+#!/usr/bin/env python
+
 import matplotlib.pyplot as plt
 import numpy as np
 
 # offset = 10000
 offset = 0
 
+# 22
 # given original list
 training_list_path='/home/cs/remote/titanx/media/win/_/IJCB2017/protocol/training_resized.csv'[22:]
 
 # and prediction list
-prediction_list_path='/home/cs/remote/titanx/media/win/_/IJCB2017/valid/ijcb2017-yolo-voc-0.5/comp4_det_test_face.txt'[22:]
+prediction_list_path='/home/cs/remote/titanx/media/win/_/IJCB2017/valid/ijcb2017-yolo-voc/comp4_det_test_2.txt'[22:]
 
 def read_original_file(list_path):
     # v0
@@ -85,27 +88,29 @@ def image_vs_occurence(prediction_list, threshold):
             image_vs_occurence.append([image_name, image_name_count])
     return image_vs_occurence
 
+# read original csv into python list with each element being [image_name, count]
 image_vs_occurence_original = read_original_file(training_list_path)
-truepositives = [elem[1] for elem in image_vs_occurence_original]
+# form list storing only each image name count
+positives = [elem[1] for elem in image_vs_occurence_original]
 
+# read 'darknet detector valid' output into python list with each element being
+# [image_name, class_probabilty]
 predictions_list = read_predictions_file(prediction_list_path)
 
-tp_sum = sum(truepositives)
+# amount of all positives in original list
+p_sum = sum(positives)
 
 tp = []
 fp = []
+tn = []
+fn = []
 
-for i in np.linspace(0, 1, 4):
-    image_vs_occurence_predicted = image_vs_occurence(predictions_list, i)
-    truepositives_and_falsepositives = [elem[1] for elem in image_vs_occurence_predicted]
-    fp_sum = sum(truepositives_and_falsepositives) - tp_sum
-    tp.append(tp_sum)
-    fp.append(fp_sum)
-    print('thresh: {} tp: {} fp: {} tp/(tp+fp): {}'.format(i, \
-                                                           tp_sum, \
-                                                           fp_sum, \
-                                                           tp_sum / float((tp_sum+fp_sum))))
+for thresh in np.linspace(0, 1, 24):
+    # form python list with each element being [image_name, count] counting
+    # image name occurence only if probability is higher than threshold thresh
+    image_vs_occurence_predicted = image_vs_occurence(predictions_list, thresh)
+    # form list storing only each image name count
+    tp_fp_tn_fn = [elem[1] for elem in image_vs_occurence_predicted]
+    sum_of_tp_fp_tn_fn = sum(tp_fp_tn_fn)
 
-
-plt.plot(tp,'.-')
-plt.show()
+    print('thresh: {} tp: {} fp: {}\n'.format(thresh, p_sum, sum_of_tp_fp_tn_fn))
