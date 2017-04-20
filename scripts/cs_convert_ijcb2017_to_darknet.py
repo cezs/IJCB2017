@@ -99,8 +99,9 @@ def create_labels_file(labels_file, use_original_classes, subject_id):
             for i in range(len(sorted(set(subject_id)))):
                 labels.write("{}\n".format(i))
         else:
-            # use binary classification
-            labels.write("{}\n".format(0))
+            # # use binary classification
+            # labels.write("{}\n".format(0))
+            # use unary classification
             labels.write("{}\n".format(1))
 
 def create_names_file(names_file, use_original_classes, subject_id):
@@ -111,8 +112,9 @@ def create_names_file(names_file, use_original_classes, subject_id):
                 for i in sorted(set(subject_id)):
                     names.write("{}\n".format(i))
             else:
-                # use binary classification
-                names.write("{}\n".format("nothing"))
+                # # use binary classification
+                # names.write("{}\n".format("nothing"))
+                # use unary classification
                 names.write("{}\n".format("face"))
 
 def create_darknet_data_configuration_file(data_config_file,\
@@ -128,8 +130,10 @@ def create_darknet_data_configuration_file(data_config_file,\
             # use original classification
             cfg_file.write("{} = {}\n".format("classess", len(set(subject_id))))
         else:
-            # use binary classification
-            cfg_file.write("{} = {}\n".format("classess", 2))
+            # # use binary classification
+            # cfg_file.write("{} = {}\n".format("classess", 2))
+            # use unary classification
+            cfg_file.write("{} = {}\n".format("classess", 1))
         cfg_file.write("{} = {}\n".format("train", output_training_listing))
         cfg_file.write("{} = {}\n".format("valid", output_training_listing))
         cfg_file.write("{} = {}\n".format("labels", labels_file))
@@ -288,11 +292,11 @@ def getArgs():
                   #top= ...
 
                   input_training_listing = '',\
-                  output_training_listing ='/media/win/_/IJCB2017/ijcb2017.train.list',\
+                  output_training_listing ='/media/win/_/IJCB2017/protocol/ijcb2017.train.list',\
                   training_images = '',\
 
                   input_validation_listing = '/media/win/_/IJCB2017/protocol/validation.csv',\
-                  output_validation_listing ='/media/win/_/IJCB2017/ijcb2017.valid.list',\
+                  output_validation_listing ='/media/win/_/IJCB2017/protocol/ijcb2017.valid.list',\
                   validation_images = '/media/win/_/IJCB2017/validation',\
 
                   img_height = 0,\
@@ -336,29 +340,6 @@ class Infodata:
         print '{}\n{}\n{}\n{}\n{}\n{}'.format(self.filename, self.subject_id,\
                                          self.x, self.y, self.width, self.height)
 
-if __name__ == "__main__":
-    
-    cfg, paths = getArgs()
-
-    run(cfg, paths)
-
-# if __name__ == "__main__":
-    
-#     cfg, paths = getArgs()
-
-#     infodata = Infodata(paths, cfg)
-#     infodata.printer()
-
-# train_filenames, subject_id, x, y, width, height = \
-#     ijcb2017_to_darknet(paths.input_training_listing,\
-#                         cfg.use_original_classes,\
-#                         paths.img_width,\
-#                         paths.img_height)
-# v_filenames, v_subject_id, v_x, v_y, v_width, v_height = \
-#     ijcb2017_to_darknet(paths.input_validation_listing,\
-#                         cfg.use_original_classes,\
-#                         paths.img_width, paths.img_height)
-
 def short_create_darknet_list_for_training(paths, infodata):
     return create_darknet_list(paths.output_training_listing,\
                          paths.training_images,\
@@ -371,10 +352,10 @@ def short_create_darknet_annotations_for_training(paths, infodata):
                                       infodata.x, infodata.y,\
                                       infodata.width, infodata.height)
 
-def short_create_darknet_list_for_validation(paths, filename):
+def short_create_darknet_list_for_validation(paths, infodata):
     return create_darknet_list(paths.output_validation_listing,\
                          paths.validation_images,\
-                         filename)
+                         infodata.filename)
 
 def short_create_darknet_annotations_for_validation(paths, infodata):
     return create_darknet_annotations(paths.validation_images,\
@@ -400,3 +381,16 @@ def short_create_configuration_file(paths, cfg, infodata):
                                            paths.labels_file,\
                                            paths.names_file,\
                                            paths.backup_dir)
+
+if __name__ == "__main__":
+    
+    cfg, paths = getArgs()
+
+    run(cfg, paths)
+
+# if __name__ == "__main__":
+    
+#     cfg, paths = getArgs()
+
+#     infodata = Infodata(paths, cfg)
+#     infodata.printer()
