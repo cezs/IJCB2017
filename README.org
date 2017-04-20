@@ -17,9 +17,16 @@ Note: all together datasets weight >75 GB, so it might take a while to download 
 
 * Unpack
 
-Unpack and log any unpacking errors with the following command
+Unpack and log any unpacking errors with the following command: 
 #+begin_src sh
 find -name 'training_*.zip' -exec sh -c 'unzip -d "${1%.*}" "$1"' _ {} \; > unzip.log 2>&1
+#+end_src
+
+* Remove Extraneous Bytes from Images
+
+You are very likely to meet with problems when working directly on images due to extraneous bytes in in some of them. In order to get rid of the reported errors use the following command: 
+#+begin_src sh
+mogrify -set comment 'Extraneous bytes removed' *.jpg
 #+end_src
 
 * Prepare Dataset for Darknet YOLO
