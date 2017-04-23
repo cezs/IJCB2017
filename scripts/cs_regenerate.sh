@@ -1,14 +1,19 @@
 # remove generated files
-rm /home/cs/_/IJCB2017/ijcb2017*
-rm /home/cs/_/IJCB2017/training/*.txt
-rm /home/cs/_/IJCB2017/training_resized/*.txt
-rm /home/cs/_/IJCB2017/validation/*.txt
+rm ${HOME}/IJCB2017/protocol/ijcb2017*
+rm ${HOME}/IJCB2017/training/*.txt
+rm ${HOME}/IJCB2017/training_resized/*.txt
+rm ${HOME}/IJCB2017/validation/*.txt
 
 # update csv file
-python /home/cs/_/IJCB2017/scripts/cs_resize.py
+python ${HOME}/IJCB2017/scripts/cs_rescale_bboxes_in_csv.py
 
-# generate files for multi-class classifications
-python /home/cs/_/IJCB2017/scripts/cs_convert_ijcb2017_to_darknet.py -abcdefgij
+echo "Choose 1) for unary classifications/detection or 2) for multi-class classifications."
+read num
 
-# # generate files for binary classification
-# python /home/cs/_/IJCB2017/scripts/cs_convert_ijcb2017_to_darknet.py -acdefgij
+case $num in
+    # generate files for unary classifications / detection
+    1) python ${HOME}/IJCB2017/scripts/cs_convert_ijcb2017_to_darknet.py -acdefgij ;;
+    # generate files for multi-class classifications
+    2) python ${HOME}/IJCB2017/scripts/cs_convert_ijcb2017_to_darknet.py -abcdefgij ;;
+    *) echo "INVALID CHOICE!" ;;
+esac
