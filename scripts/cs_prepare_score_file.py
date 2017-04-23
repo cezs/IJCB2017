@@ -3,8 +3,8 @@
 
 import csv
 
-prediction_list_path='/home/cs/remote/titanx/media/win/_/IJCB2017/valid/ijcb2017-yolo-voc/comp4_det_test_(null).txt'[22:]
-new_prediction_list_path='/home/cs/remote/titanx/media/win/_/IJCB2017/protocol/ijcb2017-yolo-voc-scores.csv'[22:]
+prediction_list_path='/home/cs/remote/titanx/media/win/_/IJCB2017/valid/ijcb2017-yolo-voc-scores.txt'[22:]
+new_prediction_list_path='/home/cs/remote/titanx/media/win/_/IJCB2017/results/ijcb2017-yolo-voc-scores.csv'[22:]
 
 def read_predictions_file(list_path):
     predictions_list = []
