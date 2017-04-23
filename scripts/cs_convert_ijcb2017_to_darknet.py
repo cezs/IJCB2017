@@ -6,18 +6,27 @@ import sys
 import argparse
 import csv
 
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
+class colours:
+    PURPLE = '\033[95m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    RED = '\033[91m'
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+    WARNING = '\033[93m'
 
 def script_info(msg):
-    print bcolors.HEADER + "[INFO] " + str(msg) + bcolors.ENDC
+    print(colours.BOLD + "[INFO] " + str(msg) + colours.ENDC)
+
+def script_check(msg):
+    print colours.PURPLE + "[CHECK] " + str(msg) + colours.ENDC
+
+def script_pass(msg):
+    print colours.GREEN + "[PASS] " + str(msg) + colours.ENDC
+
+def script_fail(msg):
+    print colours.RED + "[FAIL] " + str(msg) + colours.ENDC
 
 def ijcb2017_to_darknet(ijcb2017_annotations, use_original_classes, img_width, img_height):
     """
@@ -169,14 +178,14 @@ class Config(dict):
 def run(cfg, paths):
     "Run program"
     if cfg.use_resized_dataset:
-        script_info("Using resized dataset")
+        script_check("Using resized dataset")
     else:
-        script_info("Using original dataset")
+        script_check("Using original dataset")
 
     if cfg.use_original_classes:
-        script_info("Using original classification")
+        script_check("Using original classification")
     else:
-        script_info("Using detection / unary classification")
+        script_check("Using detection / unary classification")
 
     train_filenames, subject_id, x, y, width, height = \
         ijcb2017_to_darknet(paths.input_training_listing,\
@@ -188,14 +197,14 @@ def run(cfg, paths):
         create_darknet_list(paths.output_training_listing,\
                             paths.training_images,\
                             train_filenames)
-        script_info("Created darknet list for training")
+        script_pass("Created darknet list for training")
 
     if cfg.do_create_darknet_annotations_for_training:
         create_darknet_annotations(paths.training_images,\
                                    train_filenames,\
                                    subject_id,\
                                    x, y, width, height)
-        script_info("Created darknet annotations for training")
+        script_pass("Created darknet annotations for training")
 
     v_filenames, v_subject_id, v_x, v_y, v_width, v_height = \
         ijcb2017_to_darknet(paths.input_validation_listing,\
@@ -206,26 +215,26 @@ def run(cfg, paths):
         create_darknet_list(paths.output_validation_listing,\
                              paths.validation_images,\
                              v_filenames)
-        script_info("Created darknet list for validation")
+        script_pass("Created darknet list for validation")
 
     if cfg.do_create_darknet_annotations_for_validation:
         create_darknet_annotations(paths.validation_images,\
                                    v_filenames,\
                                    v_subject_id,\
                                    v_x, v_y, v_width, v_height)
-        script_info("Created darknet annotations for validation")
+        script_pass("Created darknet annotations for validation")
 
     if cfg.do_create_labels_file:
         create_labels_file(paths.labels_file,\
                            cfg.use_original_classes,\
                            subject_id)
-        script_info("Created labels file")
+        script_pass("Created labels file")
 
     if cfg.do_create_names_file:
         create_names_file(paths.names_file,\
                           cfg.use_original_classes,\
                           subject_id)
-        script_info("Created names file")
+        script_pass("Created names file")
 
     if cfg.do_create_configuration_file:
         create_darknet_data_configuration_file(paths.data_config_file,\
@@ -237,7 +246,7 @@ def run(cfg, paths):
                                                paths.names_file,\
                                                paths.backup_dir,
                                                paths.valid_dir)
-        script_info("Created configuration file")
+        script_pass("Created configuration file")
 
 
 def getArgs():
@@ -264,7 +273,7 @@ def getArgs():
                         help='Create data configuration file')
     args = parser.parse_args()
 
-    print(bcolors.BOLD + "Entered main function" + bcolors.ENDC)
+    script_info("Entered main function")
 
     # if args empty
     if not len(sys.argv) > 1:
