@@ -13,7 +13,7 @@ height = []
 
 first_row = []
 
-training_input_file = '/media/win/_/IJCB2017/protocol/training_updated.csv'
+training_input_file = '/media/win/_/IJCB2017/protocol/training_modified.csv'
 training_output_file = '/media/win/_/IJCB2017/protocol/training_resized.csv'
 
 with open(training_input_file, 'rb') as in_file:
