@@ -121,6 +121,7 @@ def create_darknet_data_configuration_file(data_config_file,\
                                            use_original_classes,\
                                            subject_id,\
                                            output_training_listing,\
+                                           output_validation_listing,\
                                            labels_file,\
                                            names_file,\
                                            backup_dir,
@@ -136,7 +137,7 @@ def create_darknet_data_configuration_file(data_config_file,\
             # use unary classification
             cfg_file.write("{} = {}\n".format("classess", 1))
         cfg_file.write("{} = {}\n".format("train", output_training_listing))
-        cfg_file.write("{} = {}\n".format("valid", output_training_listing))
+        cfg_file.write("{} = {}\n".format("valid", output_validation_listing))
         cfg_file.write("{} = {}\n".format("labels", labels_file))
         cfg_file.write("{} = {}\n".format("names", names_file))
         cfg_file.write("{} = {}\n".format("backup", backup_dir))
@@ -147,6 +148,7 @@ def create_darknet_data_configuration_file_short(cfg, paths, subject_id):
                                                   cfg.use_original_classes,\
                                                   subject_id,\
                                                   paths.output_training_listing,\
+                                                  paths.output_validation_listing,\
                                                   paths.labels_file,\
                                                   paths.names_file,\
                                                   paths.backup_dir,\
@@ -230,6 +232,7 @@ def run(cfg, paths):
                                                cfg.use_original_classes,\
                                                subject_id,\
                                                paths.output_training_listing,\
+                                               paths.output_validation_listing,\
                                                paths.labels_file,\
                                                paths.names_file,\
                                                paths.backup_dir,
@@ -376,6 +379,7 @@ def short_create_configuration_file(paths, cfg, infodata):
                                                   cfg.use_original_classes,\
                                                   infodata.subject_id,\
                                                   paths.output_training_listing,\
+                                                  paths.output_validation_listing,\
                                                   paths.labels_file,\
                                                   paths.names_file,\
                                                   paths.backup_dir,\
