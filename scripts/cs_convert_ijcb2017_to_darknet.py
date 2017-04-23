@@ -39,7 +39,7 @@ def ijcb2017_to_darknet(ijcb2017_annotations, use_original_classes, img_width, i
             if (use_original_classes):
                 # use original class
                 # TODO: map original subject_id to label
-                if not int(row[2]) == -1:
+                if int(row[2]) != -1:
                     subject_id.append(int(row[2]))
                 else:
                     continue
@@ -123,7 +123,8 @@ def create_darknet_data_configuration_file(data_config_file,\
                                            output_training_listing,\
                                            labels_file,\
                                            names_file,\
-                                           backup_dir):
+                                           backup_dir,
+                                           valid_dir):
     """Create configuration file."""
     with open(data_config_file, 'wb') as cfg_file:
         if (use_original_classes):
@@ -139,6 +140,7 @@ def create_darknet_data_configuration_file(data_config_file,\
         cfg_file.write("{} = {}\n".format("labels", labels_file))
         cfg_file.write("{} = {}\n".format("names", names_file))
         cfg_file.write("{} = {}\n".format("backup", backup_dir))
+        cfg_file.write("{} = {}\n".format("results", valid_dir))
         
 def create_darknet_data_configuration_file_short(cfg, paths, subject_id):
     return create_darknet_data_configuration_file(paths.data_config_file,\
@@ -147,7 +149,8 @@ def create_darknet_data_configuration_file_short(cfg, paths, subject_id):
                                                   paths.output_training_listing,\
                                                   paths.labels_file,\
                                                   paths.names_file,\
-                                                  paths.backup_dir)
+                                                  paths.backup_dir,\
+                                                  paths.valid_dir)
 
 class Paths(dict):
     """Store paths."""
@@ -171,7 +174,7 @@ def run(cfg, paths):
     if cfg.use_original_classes:
         script_info("Using original classification")
     else:
-        script_info("Using binary classification")
+        script_info("Using detection / unary classification")
 
     train_filenames, subject_id, x, y, width, height = \
         ijcb2017_to_darknet(paths.input_training_listing,\
@@ -229,7 +232,8 @@ def run(cfg, paths):
                                                paths.output_training_listing,\
                                                paths.labels_file,\
                                                paths.names_file,\
-                                               paths.backup_dir)
+                                               paths.backup_dir,
+                                               paths.valid_dir)
         script_info("Created configuration file")
 
 
@@ -286,33 +290,27 @@ def getArgs():
                   labels_file = '/media/win/_/IJCB2017/data/ijcb2017.labels',\
                   names_file = '/media/win/_/IJCB2017/data/ijcb2017.names',\
                   backup_dir =  '/media/win/_/IJCB2017/weights',\
-                  # results = /media/win/_/IJCB2017/valid/ijcb2017-yolo-voc
-                  #map = ...
-                  #eval = ...
-                  #top= ...
+                  valid_dir = '/media/win/_/IJCB2017/valid',\
+                  # map = ...
+                  # eval = ...
+                  # top= ...
 
-                  input_training_listing = '',\
+                  input_training_listing = '/media/win/_/IJCB2017/protocol/training_modified.csv',\
                   output_training_listing ='/media/win/_/IJCB2017/protocol/ijcb2017.train.list',\
-                  training_images = '',\
+                  training_images = '/media/win/_/IJCB2017/training',\
 
                   input_validation_listing = '/media/win/_/IJCB2017/protocol/validation.csv',\
                   output_validation_listing ='/media/win/_/IJCB2017/protocol/ijcb2017.valid.list',\
                   validation_images = '/media/win/_/IJCB2017/validation',\
 
-                  img_height = 0,\
-                  img_width = 0)
+                  # TODO: Use library to get dimensions and remove from here
+                  img_height = 3456.0,\
+                  img_width = 5184.0)
 
-    if not cfg.use_resized_dataset:
-        paths.input_training_listing = '/media/win/_/IJCB2017/protocol/training_updated.csv'
-        paths.training_images = '/media/win/_/IJCB2017/training'
-
-        # TODO: Use library to get dimensions and remove from here
-        paths.img_height = 3456.0
-        paths.img_width = 5184.0
-    else:
+    # Overwrite `paths` upon receiving particular option
+    if cfg.use_resized_dataset:
         paths.input_training_listing = '/media/win/_/IJCB2017/protocol/training_resized.csv'
         paths.training_images = '/media/win/_/IJCB2017/training_resized'
-
         # TODO: Use library to get dimensions and remove from here
         paths.img_height = 384.0
         paths.img_width = 576.0
@@ -375,12 +373,13 @@ def short_create_names_file(paths, cfg, infodata):
 
 def short_create_configuration_file(paths, cfg, infodata):
     return create_darknet_data_configuration_file(paths.data_config_file,\
-                                           cfg.use_original_classes,\
-                                           infodata.subject_id,\
-                                           paths.output_training_listing,\
-                                           paths.labels_file,\
-                                           paths.names_file,\
-                                           paths.backup_dir)
+                                                  cfg.use_original_classes,\
+                                                  infodata.subject_id,\
+                                                  paths.output_training_listing,\
+                                                  paths.labels_file,\
+                                                  paths.names_file,\
+                                                  paths.backup_dir,\
+                                                  paths.valid_dir)
 
 if __name__ == "__main__":
     
