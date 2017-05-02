@@ -48,10 +48,13 @@ def ijcb2017_to_darknet(ijcb2017_annotations, use_original_classes, img_width, i
             if (use_original_classes):
                 # use original class
                 # TODO: map original subject_id to label
-                if int(row[2]) != -1:
-                    subject_id.append(int(row[2]))
-                else:
-                    continue
+                # Do not include unknown identities
+                # if int(row[2]) != -1:
+                #     subject_id.append(int(row[2]))
+                # else:
+                #     continue
+                # Including unknown identities
+                subject_id.append(int(row[2]))
             else:
                 # just detect
                 subject_id.append(1)
@@ -108,9 +111,8 @@ def create_labels_file(labels_file, use_original_classes, subject_id):
             for i in range(len(sorted(set(subject_id)))):
                 labels.write("{}\n".format(i))
         else:
-            # # use binary classification
-            # labels.write("{}\n".format(0))
-            # use unary classification
+            # use binary classification
+            labels.write("{}\n".format(0))
             labels.write("{}\n".format(1))
 
 def create_names_file(names_file, use_original_classes, subject_id):
@@ -121,10 +123,9 @@ def create_names_file(names_file, use_original_classes, subject_id):
                 for i in sorted(set(subject_id)):
                     names.write("{}\n".format(i))
             else:
-                # # use binary classification
-                # names.write("{}\n".format("nothing"))
-                # use unary classification
-                names.write("{}\n".format("face"))
+                # use binary classification
+                names.write("{}\n".format("nothing"))
+                names.write("{}\n".format("identity"))
 
 def create_darknet_data_configuration_file(data_config_file,\
                                            use_original_classes,\
@@ -141,10 +142,10 @@ def create_darknet_data_configuration_file(data_config_file,\
             # use original classification
             cfg_file.write("{} = {}\n".format("classess", len(set(subject_id))))
         else:
-            # # use binary classification
-            # cfg_file.write("{} = {}\n".format("classess", 2))
-            # use unary classification
-            cfg_file.write("{} = {}\n".format("classess", 1))
+            # use binary classification
+            cfg_file.write("{} = {}\n".format("classess", 2))
+            # # use unary classification
+            # cfg_file.write("{} = {}\n".format("classess", 1))
         cfg_file.write("{} = {}\n".format("train", output_training_listing))
         cfg_file.write("{} = {}\n".format("valid", output_validation_listing))
         cfg_file.write("{} = {}\n".format("labels", labels_file))

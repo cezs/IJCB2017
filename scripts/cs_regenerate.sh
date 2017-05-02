@@ -7,11 +7,11 @@ rm ${HOME}/IJCB2017/validation/*.txt
 # update csv file
 python ${HOME}/IJCB2017/scripts/cs_rescale_bboxes_in_csv.py
 
-echo "Choose 1) for unary classifications/detection or 2) for multi-class classifications."
+echo "Choose 1) for binary classifications/detection or 2) for multi-class classifications."
 read num
 
 case $num in
-    # generate files for unary classifications / detection
+    # generate files for binary classifications / detection
     1) python ${HOME}/IJCB2017/scripts/cs_convert_ijcb2017_to_darknet.py -acdefgij ;;
     # generate files for multi-class classifications
     2) python ${HOME}/IJCB2017/scripts/cs_convert_ijcb2017_to_darknet.py -abcdefgij ;;
