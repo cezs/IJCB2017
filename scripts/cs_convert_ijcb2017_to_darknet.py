@@ -108,7 +108,8 @@ def create_labels_file(labels_file, use_original_classes, subject_id):
     with open(labels_file, 'wb') as labels:
         if (use_original_classes):
             # use original classification
-            for i in range(len(sorted(set(subject_id)))):
+            # for i in range(len(sorted(set(subject_id)))):
+            for i in sorted(set(subject_id)):
                 labels.write("{}\n".format(i))
         else:
             # use binary classification
