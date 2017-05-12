@@ -1,5 +1,11 @@
 #+title: IJCB2017
 
+This repository contains:
+- Various network architectures and configurations as used in training, inference and validation (see =cfg= direcotry)
+- Scripts for preparing dataset configurations files required by Darknet framework -- the generated files are located in =data= and =protocol= directories
+- Spreadsheet for calculating various parameters of network
+- Score files used in evaluation of accuracy of trained network weights (see =results=, =valid= and =recall= directories)
+
 * Download
 
 First register at [[http://www.face-recognition-challenge.com/][challenge's webpage]]. The download page is located under [[http://vast.uccs.edu/Opensetface/][following link]].
