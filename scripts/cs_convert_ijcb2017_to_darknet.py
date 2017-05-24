@@ -49,12 +49,12 @@ def ijcb2017_to_darknet(ijcb2017_annotations, use_original_classes, img_width, i
                 # use original class
                 # TODO: map original subject_id to label
                 # Do not include unknown identities
-                # if int(row[2]) != -1:
-                #     subject_id.append(int(row[2]))
-                # else:
-                #     continue
-                # Including unknown identities
-                subject_id.append(int(row[2]))
+                if int(row[2]) != -1:
+                    subject_id.append(int(row[2]) +1)
+                else:
+                    continue
+                # # including unknown identities
+                # subject_id.append(int(row[2]) +1)
             else:
                 # just detect
                 subject_id.append(1)
@@ -122,7 +122,7 @@ def create_names_file(names_file, use_original_classes, subject_id):
             if (use_original_classes):
                 # use original classification
                 for i in sorted(set(subject_id)):
-                    names.write("{}\n".format(i))
+                    names.write("{}\n".format(i -1))
             else:
                 # use binary classification
                 names.write("{}\n".format("nothing"))
