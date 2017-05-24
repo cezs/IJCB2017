@@ -2,8 +2,8 @@
 
 This repository contains:
 - Various network architectures and configurations as used in training, inference and validation (see =cfg= direcotry)
-- Scripts for preparing dataset configurations files required by Darknet framework -- the generated files are located in =data= and =protocol= directories
-- Spreadsheet for calculating various parameters of network
+- Scripts for preparing dataset configurations files required by Darknet framework (see =data= and =protocol= directories containing the generated files)
+- Spreadsheet for calculating various parameters of network (see =spreadsheets=)
 - Score files used in evaluation of accuracy of trained network weights (see =results=, =valid= and =recall= directories)
 
 * Download
