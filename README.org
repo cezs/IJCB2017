@@ -49,7 +49,7 @@ file <image>
 #+end_src
 to find the current dimensions of an image.
 
-Change =use_resized_dataset= to =True= in /cs_convert_to_darknet.py/ in order to use resized dataset.
+Change =use_resized_dataset= to =True= in /cs_prepare_uccs.py/ in order to use resized dataset.
 
 Now run the following script
 #+begin_src sh
@@ -64,3 +64,43 @@ This script generates the following files
 - ijcb2017.valid.list :: list of image files selected for validation
 - training/*.txt :: individual file annotation for each image containing class, x, y, width and height parameters of bounding box
 - validation/*.txt :: individual file for each image containing class, x, y, width and height parameters of bounding box
+
+In order to prepare a custom dataset, please see the =cs_prepare_uccs= script help.
+#+begin_example
+usage: cs_prepare_uccs.py [-h] [-a] [-b] [-c] [-d] [-e] [-f]
+                                         [-g] [-i] [-j]
+
+Unconstrained Face Detection and Open Set RecognitionChallenge in Darknet
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -a, --resized_dataset
+                        Use resized dataset
+  -b, --original_classes
+                        Use original classes
+  -c, --training_list   Create Darknet list for training
+  -d, --training_annotations
+                        Create Darknet annotations for training
+  -e, --validation_list
+                        Create Darknet list for validation
+  -f, --validation_annotations
+                        Create Darknet annotations for validation
+  -g, --labels_file     Create labels file
+  -i, --names_file      Create names file
+  -j, --data_cfg_file   Create data configuration file
+#+end_example
+
+Other provided scripts include:
+- =cs_prepare_uccs.py= :: Convert dataset to format required by Darknet framework
+- =cs_darknet_collect_loss.py= :: Parse training log file and plot loss graph
+- =cs_darknet_recall_plot.py= ::  Parse training log file and plot recall graph
+- =cs_darknet_valid_plot.py= ::  Parse training log file and plot validation graph
+- =cs_prepare_score_file.py= :: Convert score file generated with Darknet framework to the format used in IJCB2017 challenge
+- =cs_rescale_bboxes_in_csv.py= :: Re-scale bounding boxes in csv to have size relative to image dimensions 
+- =cs_darknet_run_detection.sh= :: Run Darknet's detection using configuration files for IJCB2017 challenge 
+- =cs_darknet_train.sh= :: Run Darknet's training using configuration files for IJCB2017 challenge 
+- =cs_regenerate.sh= :: Generate all required configuration files
+
+* License
+
+This is free and unencumbered software released into the public domain. For more information, please refer to the [[./LICENSE][LICENSE]] file.
