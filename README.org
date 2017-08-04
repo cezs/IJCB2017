@@ -90,6 +90,8 @@ optional arguments:
   -j, --data_cfg_file   Create data configuration file
 #+end_example
 
+* Scripts
+
 Other provided scripts include:
 - =cs_prepare_uccs.py= :: Convert dataset to format required by Darknet framework
 - =cs_darknet_collect_loss.py= :: Parse training log file and plot loss graph
